@@ -7,4 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class PromoCode extends Model
 {
     //
+    protected $table = 'promo_codes';
+    protected $fillable = ['id','code','discount'];
+
+    public function transaction(){
+        return $this->hasOne(Transaction::class);
+    }
+
 }

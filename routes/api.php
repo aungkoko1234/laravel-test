@@ -19,6 +19,13 @@ Route::post('/login', 'Api\AuthController@login');
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('details', 'API\AuthController@details');
     Route::get('users','Api\UserController@index');
+    Route::get('transaction','Api\TransactionController@index');
+    Route::post('transaction','Api\TransactionController@store');
 
 });
 Route::apiResource('/type', 'Api\TypeController')->middleware('auth:api');
+Route::apiResource('/tag', 'Api\TagController')->middleware('auth:api');
+Route::apiResource('/alias', 'Api\AliasController')->middleware('auth:api');
+Route::apiResource('/newbie', 'Api\NewbieController')->middleware('auth:api');
+Route::apiResource('/pack', 'Api\PackController')->middleware('auth:api');
+Route::apiResource('/promo_code', 'Api\PromoController')->middleware('auth:api');
