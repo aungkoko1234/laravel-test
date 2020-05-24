@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Logging;
 use App\Pack;
 use App\PromoCode;
+use App\Repositories\LoggingRepository;
 use App\Repositories\PackRepository;
 use App\Repositories\PromoCodeRepository;
 use App\Repositories\TransactionRepository;
@@ -18,17 +20,19 @@ class TransactionController extends Controller
     protected $model;
     protected $promoModel;
     protected $packModel;
+    protected $logModel;
 
     /**
      * PostController constructor.
      *
      * @param TransactionRepositoryInterface $transaction
      */
-    public function __construct(Transaction $transaction, PromoCode $promoCode, Pack $pack)
+    public function __construct(Transaction $transaction, PromoCode $promoCode, Pack $pack,Logging $logging)
     {
         $this->model = new TransactionRepository($transaction);
         $this->promoModel = new PromoCodeRepository($promoCode);
         $this->packModel = new PackRepository($pack);
+        $this->logModel = new LoggingRepository($logging);
     }
 
     /**
@@ -71,7 +75,21 @@ class TransactionController extends Controller
         ]);
 
         // create record and pass in only fields that are fillable
-        return $this->model->create($new_request);
+        $created_request = $this->model->create($new_request);
+        if($created_request){
+            $description = "User Id".$request->user_id." bought".$bought_pack->name;
+            $effect = "Transaction Table";
+            $action = "Create";
+            $user_id = $request->user_id;
+            $new_log = array_merge([],[
+                "description"=>$description,
+                "effectedTable"=>$effect,
+                "action"=>$action,
+                "user_id"=>$user_id
+            ]);
+            return $this->logModel->create($new_log);
+
+        }
     }
 
     public function show($id)

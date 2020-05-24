@@ -21,6 +21,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('users','Api\UserController@index');
     Route::get('transaction','Api\TransactionController@index');
     Route::post('transaction','Api\TransactionController@store');
+    Route::get('log','Api\LoggingController@index');
 
 });
 Route::apiResource('/type', 'Api\TypeController')->middleware('auth:api');
